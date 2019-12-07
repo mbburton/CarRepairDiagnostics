@@ -99,15 +99,15 @@ public class CarDiagnosticEngine {
 
 	private List<String> getMissingDataFields(Car car){
 		List<String> missingDataFields = new ArrayList<>();
-		if(car.getMake() == null){
+		if(car.getMake() == null || car.getMake().isEmpty()){
 			missingDataFields.add("make");
 		}
 
-		if(car.getModel() == null){
+		if(car.getModel() == null || car.getModel().isEmpty()){
 			missingDataFields.add("model");
 		}
 
-		if(car.getYear() == null){
+		if(car.getYear() == null || car.getYear().isEmpty()){
 			missingDataFields.add("year");
 		}
 
