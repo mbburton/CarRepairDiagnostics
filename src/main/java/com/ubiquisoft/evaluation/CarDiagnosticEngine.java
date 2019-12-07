@@ -9,6 +9,11 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.locks.Condition;
 
 public class CarDiagnosticEngine {
 
@@ -39,7 +44,84 @@ public class CarDiagnosticEngine {
 		 * console output is as least as informative as the provided methods.
 		 */
 
+		//Missing Data Fields - Step 1
+		List<String> missingDataFields = getMissingDataFields(car);
 
+		if(!missingDataFields.isEmpty()){
+			for(String missingDataField : missingDataFields){
+				printMissingDataField(missingDataField);
+			}
+
+			printDiagnosticsFailAndExit("There were missing data fields.");
+		}
+
+		//Missing Parts - Step 2
+		Map<PartType, Integer> missingPartsMap = car.getMissingPartsMap();
+
+		if(!missingPartsMap.isEmpty()){
+			for(Map.Entry<PartType, Integer> entry : missingPartsMap.entrySet()){
+				printMissingPart(entry.getKey(), entry.getValue());
+			}
+
+			printDiagnosticsFailAndExit("There were missing parts.");
+
+		}
+
+		//Damaged Parts - Step 3
+		Map<PartType, ConditionType> damagedParts = findDamagedParts(car);
+
+		if(!damagedParts.isEmpty()){
+			for(Map.Entry<PartType, ConditionType> entry : damagedParts.entrySet()){
+				printDamagedPart(entry.getKey(), entry.getValue());
+			}
+
+			printDiagnosticsFailAndExit("There were damaged parts.");
+		}
+
+		//Diagnostics Success - Step 4
+		printDiagnosticsSuccessAndExit(car);
+	}
+
+	private void printDiagnosticsSuccessAndExit(Car car){
+		System.out.println(String.format("The car Year: %s, Make: %s, and Model: %s has passed diagnostics.", car.getYear(), car.getMake(), car.getModel()));
+		System.exit(1);
+	}
+
+	private Map<PartType, ConditionType> findDamagedParts(Car car){
+		Map<PartType, ConditionType> damagedParts = new HashMap<>();
+		for(Part p: car.getParts()){
+			if(!p.isInWorkingCondition()){
+				damagedParts.put(p.getType(), p.getCondition());
+			}
+		}
+		return damagedParts;
+	}
+
+	private List<String> getMissingDataFields(Car car){
+		List<String> missingDataFields = new ArrayList<>();
+		if(car.getMake() == null){
+			missingDataFields.add("make");
+		}
+
+		if(car.getModel() == null){
+			missingDataFields.add("model");
+		}
+
+		if(car.getYear() == null){
+			missingDataFields.add("year");
+		}
+
+		return missingDataFields;
+	}
+
+	private void printDiagnosticsFailAndExit(String reason){
+		System.out.println(String.format("The diagnostics have failed for the following reason: %s", reason));
+		System.exit(2);
+	}
+
+	private void printMissingDataField(String missingField) {
+		if(missingField == null)  throw new IllegalArgumentException("Missing Field must not be null");
+		System.out.println(String.format("The car is missing the following data field: %s", missingField));
 	}
 
 	private void printMissingPart(PartType partType, Integer count) {

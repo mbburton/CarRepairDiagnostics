@@ -3,6 +3,7 @@ package com.ubiquisoft.evaluation.domain;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,17 +32,31 @@ public class Car {
 		 *      }
 		 */
 
-		return null;
+		Map<PartType, Integer> missingPartsMap = new HashMap<>();
+
+		missingPartsMap.put(PartType.ENGINE, 1);
+		missingPartsMap.put(PartType.ELECTRICAL, 1);
+		missingPartsMap.put(PartType.FUEL_FILTER, 1);
+		missingPartsMap.put(PartType.OIL_FILTER, 1);
+		missingPartsMap.put(PartType.TIRE, 4);
+
+		for(Part p : getParts()){
+			missingPartsMap.put(p.getType(), missingPartsMap.get(p.getType()) - 1);
+		}
+
+		missingPartsMap.entrySet().removeIf(entry -> entry.getValue() <= 0);
+
+		return missingPartsMap;
 	}
 
 	@Override
 	public String toString() {
 		return "Car{" +
-				       "year='" + year + '\'' +
-				       ", make='" + make + '\'' +
-				       ", model='" + model + '\'' +
-				       ", parts=" + parts +
-				       '}';
+				"year='" + year + '\'' +
+				", make='" + make + '\'' +
+				", model='" + model + '\'' +
+				", parts=" + parts +
+				'}';
 	}
 
 	/* --------------------------------------------------------------------------------------------------------------- */
