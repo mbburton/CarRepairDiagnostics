@@ -40,8 +40,10 @@ public class Car {
 		missingPartsMap.put(PartType.OIL_FILTER, 1);
 		missingPartsMap.put(PartType.TIRE, 4);
 
-		for(Part p : getParts()){
-			missingPartsMap.put(p.getType(), missingPartsMap.get(p.getType()) - 1);
+		if(getParts() != null && !getParts().isEmpty()) {
+			for (Part p : getParts()) {
+				missingPartsMap.put(p.getType(), missingPartsMap.get(p.getType()) - 1);
+			}
 		}
 
 		missingPartsMap.entrySet().removeIf(entry -> entry.getValue() <= 0);

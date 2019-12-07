@@ -89,11 +89,15 @@ public class CarDiagnosticEngine {
 
 	private Map<PartType, ConditionType> findDamagedParts(Car car){
 		Map<PartType, ConditionType> damagedParts = new HashMap<>();
-		for(Part p: car.getParts()){
-			if(!p.isInWorkingCondition()){
-				damagedParts.put(p.getType(), p.getCondition());
+
+		if(car.getParts() != null && !car.getParts().isEmpty()) {
+			for (Part p : car.getParts()) {
+				if (!p.isInWorkingCondition()) {
+					damagedParts.put(p.getType(), p.getCondition());
+				}
 			}
 		}
+
 		return damagedParts;
 	}
 
